@@ -15,6 +15,19 @@ import (
 )
 
 func Index(w http.ResponseWriter, r *http.Request) {
+	session := getSession()
+
+	// collection := session.DB("hockey").C("players").Find()
+
+	var results Todos
+
+	err := session.DB("hockey").C("players").Find(nil).All(&results)
+	if err != nil {
+		fmt.Println("Error occured")
+	} else {
+		fmt.Println("Results All: ", results)
+	}
+
 	fmt.Fprintf(w, "Hello world, %q", html.EscapeString(r.URL.Path))
 }
 
