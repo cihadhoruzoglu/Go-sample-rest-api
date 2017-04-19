@@ -1,12 +1,16 @@
 package main
 
-import "time"
+import (
+	"time"
+
+	"gopkg.in/mgo.v2/bson"
+)
 
 type Todo struct {
-	Id        int       `json:"id"`
-	Name      string    `json:"name"`
-	Completed bool      `json:"completed"`
-	Due       time.Time `json:"due"`
+	Id        bson.ObjectId `json:"id" bson:"_id"`
+	Name      string        `json:"name" bson:"name"`
+	Completed bool          `json:"completed" bson:"completed"`
+	Due       time.Time     `json:"due" bson:"due"`
 }
 
 type Todos []Todo

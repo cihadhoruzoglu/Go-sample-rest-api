@@ -13,12 +13,14 @@ func main() {
 	log.Fatal(http.ListenAndServe(":8080", router))
 }
 
-func getSession() *mgo.Session {
+func getCollection() *mgo.Collection {
 	s, err := mgo.Dial("mongodb://localhost")
 
 	if err != nil {
 		panic(err)
 	}
 
-	return s
+	c := s.DB("hockey").C("players")
+
+	return c
 }

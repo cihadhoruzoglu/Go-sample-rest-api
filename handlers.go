@@ -7,27 +7,14 @@ import (
 	"io"
 	"net/http"
 
-	"io/ioutil"
+	"gopkg.in/mgo.v2/bson"
 
-	"strconv"
+	"io/ioutil"
 
 	"github.com/gorilla/mux"
 )
 
 func Index(w http.ResponseWriter, r *http.Request) {
-	session := getSession()
-
-	// collection := session.DB("hockey").C("players").Find()
-
-	var results Todos
-
-	err := session.DB("hockey").C("players").Find(nil).All(&results)
-	if err != nil {
-		fmt.Println("Error occured")
-	} else {
-		fmt.Println("Results All: ", results)
-	}
-
 	fmt.Fprintf(w, "Hello world, %q", html.EscapeString(r.URL.Path))
 }
 
@@ -50,11 +37,7 @@ func TodoShow(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	todoId := vars["todoId"]
 
-	id, err := strconv.Atoi(todoId)
-
-	if err != nil {
-		panic(err)
-	}
+	id := bson.ObjectIdHex(todoId)
 
 	todo := RepoFindTodo(id)
 
@@ -102,11 +85,7 @@ func TodoRemove(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	todoId := vars["todoId"]
 
-	id, err := strconv.Atoi(todoId)
-
-	if err != nil {
-		panic(err)
-	}
+	id := bson.ObjectIdHex(todoId)
 
 	todo := RepoDestroyTodo(id)
 
