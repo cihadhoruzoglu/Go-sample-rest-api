@@ -13,6 +13,10 @@ var (
 // Give us some used data
 
 func init() {
+	RepoSyncAllTodos()
+}
+
+func RepoSyncAllTodos() {
 	collection := getCollection()
 
 	err := collection.Find(nil).All(&todos)
@@ -22,14 +26,17 @@ func init() {
 }
 
 func RepoFindTodo(id bson.ObjectId) Todo {
-	for _, t := range todos {
-		if t.Id == id {
-			return t
-		}
+
+	u := Todo{}
+
+	collection := getCollection()
+
+	if err := collection.FindId(id).One(&u); err != nil {
+		// return empty Todo if not found
+		return u
 	}
 
-	// return empty Todo if not found
-	return Todo{}
+	return u
 }
 
 /*
@@ -43,18 +50,17 @@ func RepoCreateTodo(t Todo) Todo {
 
 	collection.Insert(t)
 
-	todos = append(todos, t)
+	RepoSyncAllTodos()
 
 	return t
 }
 
-func RepoDestroyTodo(id bson.ObjectId) error {
-	for i, t := range todos {
-		if t.Id == id {
-			todos = append(todos[:i], todos[i+1:]...)
-			return nil
-		}
+func RepoDestroyTodo(id bson.ObjectId) {
+	collection := getCollection()
+
+	if err := collection.RemoveId(id); err != nil {
+		fmt.Errorf("Could not find Todo with id of %d to delete", id)
 	}
 
-	return fmt.Errorf("Could not find Todo with id of %d to delete", id)
+	RepoSyncAllTodos()
 }

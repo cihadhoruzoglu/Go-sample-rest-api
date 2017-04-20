@@ -80,16 +80,20 @@ func TodoCreate(w http.ResponseWriter, r *http.Request) {
 
 func TodoRemove(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json;charset=UTF-8")
-	w.WriteHeader(http.StatusNoContent)
 
 	vars := mux.Vars(r)
 	todoId := vars["todoId"]
 
+	fmt.Println("Remove id", todoId)
+
+	if !bson.IsObjectIdHex(todoId) {
+		w.WriteHeader(404)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+
 	id := bson.ObjectIdHex(todoId)
 
-	todo := RepoDestroyTodo(id)
-
-	if err := json.NewEncoder(w).Encode(todo); err != nil {
-		panic(err)
-	}
+	RepoDestroyTodo(id)
 }
