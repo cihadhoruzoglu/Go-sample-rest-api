@@ -20,7 +20,7 @@ func getCollection() *mgo.Collection {
 		panic(err)
 	}
 
-	c := s.DB("hockey").C("players")
+	c := s.DB("todosample").C("todos")
 
 	return c
 }
